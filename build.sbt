@@ -15,6 +15,8 @@ enablePlugins(JavaAppPackaging)
 // we specify the name for our fat jar
 jarName in assembly := "example-mesos-framework.jar"
 
+mainClass in assembly := Some("Main")
+
 // removes all jar mappings in universal and appends the fat jar
 mappings in Universal <<= (mappings in Universal, assembly in Compile) map { (mappings, fatJar) =>
   val filtered = mappings filter { case (file, name) =>  ! name.endsWith(".jar") }

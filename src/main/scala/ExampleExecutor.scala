@@ -5,7 +5,9 @@ import org.apache.mesos.MesosExecutorDriver
 import org.apache.mesos.Protos
 import org.apache.mesos.Protos._
 
-class ExampleExecutor extends App with Executor{
+import scala.util.Random
+
+class ExampleExecutor extends Executor {
   override def shutdown(driver: ExecutorDriver) = {}
 
   override def disconnected(driver: ExecutorDriver) = {}
@@ -26,9 +28,12 @@ class ExampleExecutor extends App with Executor{
     val status = Protos.TaskStatus.newBuilder
         .setTaskId(task.getTaskId)
         .setState(Protos.TaskState.TASK_FINISHED).build
+    Thread.sleep(Math.abs(Random.nextInt() % 3000)+1000)
     driver.sendStatusUpdate(status)
   }
+}
 
+object ExampleExecutor extends App {
   val driver = new MesosExecutorDriver(new ExampleExecutor)
   val status = if (driver.run() == Protos.Status.DRIVER_STOPPED) 0 else 1
   sys.exit(status)
