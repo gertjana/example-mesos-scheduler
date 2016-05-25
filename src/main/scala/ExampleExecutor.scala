@@ -23,12 +23,15 @@ class ExampleExecutor extends Executor {
   override def registered(driver: ExecutorDriver, executorInfo: ExecutorInfo, frameworkInfo: FrameworkInfo, slaveInfo: SlaveInfo) = {}
 
   override def launchTask(driver: ExecutorDriver, task: TaskInfo) = {
-    val id = task.getData.toString("UTF-8")
-    driver.sendFrameworkMessage(id.getBytes)
+    val data = BigDecimal(task.getData.toString("UTF-8"))
+
+    val result = 4/data
+
+    driver.sendFrameworkMessage(result.toString.getBytes)
     val status = Protos.TaskStatus.newBuilder
         .setTaskId(task.getTaskId)
         .setState(Protos.TaskState.TASK_FINISHED).build
-    Thread.sleep(Math.abs(Random.nextInt() % 3000)+1000)
+
     driver.sendStatusUpdate(status)
   }
 }
