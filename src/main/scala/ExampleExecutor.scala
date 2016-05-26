@@ -1,4 +1,5 @@
 
+import com.google.protobuf.ByteString
 import org.apache.mesos.Executor
 import org.apache.mesos.ExecutorDriver
 import org.apache.mesos.MesosExecutorDriver
@@ -24,10 +25,10 @@ class ExampleExecutor extends Executor {
 
   override def launchTask(driver: ExecutorDriver, task: TaskInfo) = {
     val data = BigDecimal(task.getData.toString("UTF-8"))
+    val result = BigDecimal(4)/data
 
-    val result = 4/data
+    driver.sendFrameworkMessage(ByteString.copyFromUtf8(result.toString).toByteArray)
 
-    driver.sendFrameworkMessage(result.toString.getBytes)
     val status = Protos.TaskStatus.newBuilder
         .setTaskId(task.getTaskId)
         .setState(Protos.TaskState.TASK_FINISHED).build
